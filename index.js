@@ -1,8 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const adminRouter = require('./routes/admin');
+const adminRouter = require('./routes/adminRoutes');
+const taskRouter = require('./routes/taskRoutes');
 const authController = require('./controllers/authController');
+const taskController = require('./controllers/taskController');
 
 
 const USER_NAME = "prakriti_01";
@@ -44,7 +46,6 @@ app.get('/',(req,res)=>{
 })
 
 
-
 //login
 app.post('/login',authController.login);
 
@@ -52,6 +53,11 @@ app.post('/login',authController.login);
 //signup
 //before post request, we need to parse the body
 app.post('/signup',authController.signup);
+
+
+//task routes
+
+app.use('/tasks', taskRouter);
 
 
 

@@ -8,7 +8,7 @@ function login(req, res) {
         .then((user) => {
             if (!user) {
                 // User not found
-                return res.status(404).json({ message: 'User not found' });
+                return res.status(400).json({ message: 'User not found' });
             }
             
             // Convert role values to lowercase for case-insensitive comparison
