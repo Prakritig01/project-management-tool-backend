@@ -12,14 +12,12 @@ const addProject = (req, res) => {
             console.log(err);
             res.status(500).json({ message: 'Failed to add project' });
         });
-
 };
 
 const getAllProjects = (req, res) => {
     Project.find()
         .sort({ createdAt: -1 })
         .then((projects) => {
-            console.log('Projects fetched:', projects);
             res.status(200).json(projects);
         })
         .catch((err) => {
@@ -28,8 +26,6 @@ const getAllProjects = (req, res) => {
         });
 };
 
-
-// Add this function to delete a project by its ID
 const deleteProject = (req, res) => {
     const projectId = req.params.id;
 
@@ -46,4 +42,19 @@ const deleteProject = (req, res) => {
         });
 };
 
-module.exports = { addProject, getAllProjects, deleteProject };
+// Assign a manager to a specific project
+const getAssignedManagers = (req, res) => {
+    Project.find({ manager: { $ne: null } }) // Find projects where manager is not null
+        .select('manager') // Only select the manager field
+        .then((projects) => {
+            const assignedManagers = projects.map((project) => project.manager); // Get list of assigned manager IDs
+            res.status(200).json(assignedManagers);
+        })
+        .catch((err) => {
+            console.error('Error fetching assigned managers:', err);
+            res.status(500).json({ message: 'Failed to fetch assigned managers' });
+        });
+};
+
+
+module.exports = { addProject, getAllProjects, deleteProject, getAssignedManagers };
