@@ -1,6 +1,6 @@
 const Project = require('../models/projectModel');
 
-const addProject = (req,res)=>{
+const addProject = (req, res) => {
     const projectData = req.body;
     const newProject = new Project(projectData);
     newProject.save()
@@ -15,9 +15,9 @@ const addProject = (req,res)=>{
 
 };
 
-const getAllProjects = (req,res) => {
+const getAllProjects = (req, res) => {
     Project.find()
-        .sort({createdAt: -1})
+        .sort({ createdAt: -1 })
         .then((projects) => {
             console.log('Projects fetched:', projects);
             res.status(200).json(projects);
@@ -46,4 +46,4 @@ const deleteProject = (req, res) => {
         });
 };
 
-module.exports = {addProject, getAllProjects,deleteProject};
+module.exports = { addProject, getAllProjects, deleteProject };

@@ -12,12 +12,12 @@ const taskSchema = new Schema({
         required : true,
         trim : true,
     },
-    priority : {
+    deadline : {
         type : String,
         required : true,
         trim : true
     },
-    deadline : {
+    priority : {
         type : String,
         required : true,
         trim : true
