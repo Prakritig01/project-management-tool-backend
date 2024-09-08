@@ -78,4 +78,24 @@ function getUserDetails(req, res) {
         });
 }
 
-module.exports = { login, signup, getUserDetails };
+function getMembersAndManagers(req, res) {
+    // Find users by roles
+    User.find({ role: { $in: ['member', 'manager'] } }) // Assuming 'member' and 'manager' are the roles
+        .then((users) => {
+            // Group users by their role
+            const members = users.filter(user => user.role.toLowerCase() === 'member');
+            const managers = users.filter(user => user.role.toLowerCase() === 'manager');
+
+            res.status(200).json({
+                members,
+                managers
+            });
+        })
+        .catch((err) => {
+            console.error('Error fetching users:', err);
+            res.status(500).json({ message: 'Server error' });
+        });
+}
+
+
+module.exports = { login, signup, getUserDetails, getMembersAndManagers };

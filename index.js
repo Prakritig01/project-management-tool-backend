@@ -53,6 +53,9 @@ app.post('/login', authController.login);
 //before post request, we need to parse the body
 app.post('/signup', authController.signup);
 
+//get members and managers details
+app.get('/members-and-managers',authController.getMembersAndManagers);
+
 //get user details
 app.get('/user/:email', authController.getUserDetails);
 
