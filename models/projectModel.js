@@ -17,6 +17,10 @@ const projectSchema = new Schema({
         ref: 'User',  // Reference to the User model for the manager
         required: true
     },
+    deadline: {
+        type: Date,  // Date type for the deadline
+        required: true  // You can set this to false if it's optional
+    }
 
 },{timestamps: true});
 

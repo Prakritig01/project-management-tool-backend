@@ -11,5 +11,9 @@ router.post('/addProject', projectController.addProject);
 //GET request to fetch all projects
 router.get('/getAllProjects', projectController.getAllProjects);
 
+
+// DELETE request to delete a project by its ID
+router.delete('/deleteProject/:id', projectController.deleteProject);
+
 module.exports = router;
 

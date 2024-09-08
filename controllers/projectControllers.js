@@ -19,6 +19,7 @@ const getAllProjects = (req,res) => {
     Project.find()
         .sort({createdAt: -1})
         .then((projects) => {
+            console.log('Projects fetched:', projects);
             res.status(200).json(projects);
         })
         .catch((err) => {
@@ -27,4 +28,22 @@ const getAllProjects = (req,res) => {
         });
 };
 
-module.exports = {addProject, getAllProjects};
+
+// Add this function to delete a project by its ID
+const deleteProject = (req, res) => {
+    const projectId = req.params.id;
+
+    Project.findByIdAndDelete(projectId)
+        .then((result) => {
+            if (!result) {
+                return res.status(404).json({ message: 'Project not found' });
+            }
+            res.status(200).json({ message: 'Project deleted successfully', project: result });
+        })
+        .catch((err) => {
+            console.error('Error deleting project:', err);
+            res.status(500).json({ message: 'Failed to delete project' });
+        });
+};
+
+module.exports = {addProject, getAllProjects,deleteProject};
