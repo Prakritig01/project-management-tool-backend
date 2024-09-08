@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const taskRouter = require('./routes/taskRoutes');
 const authController = require('./controllers/authController');
+const projectRouter = require('./routes/projectRoutes');
 
 
 const USER_NAME = "prakriti_01";
@@ -52,10 +53,15 @@ app.post('/login', authController.login);
 //before post request, we need to parse the body
 app.post('/signup', authController.signup);
 
+//get user details
+app.get('/user/:email', authController.getUserDetails);
+
 
 //task routes
-
 app.use('/tasks', taskRouter);
+
+//project routes
+app.use('/projects', projectRouter);
 
 
 

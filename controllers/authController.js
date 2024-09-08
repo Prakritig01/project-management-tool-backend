@@ -1,5 +1,6 @@
 const User = require('../models/userModel');
 
+// Login function
 function login(req, res) {
     const { email, password, role } = req.body;
 
@@ -7,54 +8,74 @@ function login(req, res) {
     User.findOne({ email })
         .then((user) => {
             if (!user) {
-                // User not found
                 return res.status(400).json({ message: 'User not found' });
             }
-            
+
             // Convert role values to lowercase for case-insensitive comparison
             const formRole = role.toLowerCase();
             const storedRole = user.role.toLowerCase();
-            
+
             if (user.password !== password || storedRole !== formRole) {
-                // Incorrect password or role
                 console.log("Request body role:", formRole);
                 console.log("User role:", storedRole);
                 return res.status(401).json({ message: 'Incorrect password or role' });
             } else {
-                // Password and role match
                 console.log('Password matched!');
-                // Send a response indicating successful login
-                res.status(200).json({ message: 'Login successful', role: storedRole });
+                // On successful login, respond with user details and token (if you plan to use JWT later)
+                res.status(200).json({
+                    message: 'Login successful',
+                    user: {
+                        name: user.name,
+                        email: user.email,
+                        role: storedRole,
+                    },
+                });
             }
         })
         .catch((err) => {
             console.error('Error during login:', err);
-            // Send a response indicating server error
             res.status(500).json({ message: 'Server error' });
         });
 }
 
-
-
-function signup(req,res){
-    //data aagya obj mei
+// Signup function
+function signup(req, res) {
     const obj = req.body;
-    // console.log(obj);
-
-    //new user banana hai
-    const newUSer = new User(obj);
-    newUSer.save()
-        .then((resObj)=>{
-            console.log('user created successfully');
-            res.send('user created successfully');
+    const newUser = new User(obj);
+    
+    newUser.save()
+        .then(() => {
+            console.log('User created successfully');
+            res.status(200).json({ message: 'User created successfully' });
         })
-        .catch((err)=>{
-            res.send('user not created');
-            console.log(err);
-        })
+        .catch((err) => {
+            console.log('Error creating user:', err);
+            res.status(500).json({ message: 'User not created' });
+        });
 }
 
+// Get User Details function
+function getUserDetails(req, res) {
+    const { email } = req.params;  // Assuming email is passed in the URL as a parameter
 
-module.exports = {login,signup};
+    // Find user by email
+    User.findOne({ email })
+        .then((user) => {
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
 
+            // Send user details (excluding sensitive data like password)
+            res.status(200).json({
+                name: user.name,
+                email: user.email,
+                role: user.role
+            });
+        })
+        .catch((err) => {
+            console.error('Error fetching user details:', err);
+            res.status(500).json({ message: 'Server error' });
+        });
+}
 
+module.exports = { login, signup, getUserDetails };
