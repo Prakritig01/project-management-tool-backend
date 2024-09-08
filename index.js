@@ -1,10 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const adminRouter = require('./routes/adminRoutes');
 const taskRouter = require('./routes/taskRoutes');
 const authController = require('./controllers/authController');
-const taskController = require('./controllers/taskController');
 
 
 const USER_NAME = "prakriti_01";
@@ -20,39 +18,39 @@ let port = 3020;
 
 //connecting to the database
 mongoose.connect(DB_URI)
-.then(()=>{
-    console.log("connected to database");
-    app.listen(port, (req,res)=>{
-        console.log(`server started on port ${port}`);
+    .then(() => {
+        console.log("connected to database");
+        app.listen(port, (req, res) => {
+            console.log(`server started on port ${port}`);
+        })
     })
-})
-.catch((err)=>{
-    console.error('Failed to connect to database', err);
-    process.exit(1); // Exit the process with a failure code
-})
+    .catch((err) => {
+        console.error('Failed to connect to database', err);
+        process.exit(1); // Exit the process with a failure code
+    })
 
 
-const corsObj={
-    origin : "http://localhost:3000",
-    credentials : true
+const corsObj = {
+    origin: "http://localhost:3000",
+    credentials: true
 }
 
-app.use(cors(corsObj));   
+app.use(cors(corsObj));
 app.use(express.json());
 
 //getting the home page
-app.get('/',(req,res)=>{
+app.get('/', (req, res) => {
     res.send("Welcome to the project management tool");
 })
 
 
 //login
-app.post('/login',authController.login);
+app.post('/login', authController.login);
 
 
 //signup
 //before post request, we need to parse the body
-app.post('/signup',authController.signup);
+app.post('/signup', authController.signup);
 
 
 //task routes
