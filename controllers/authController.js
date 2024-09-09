@@ -10,7 +10,7 @@ function getToken(email) {
 // Login function
 async function login(req, res) {
     const { email, password, role } = req.body;
-    console.log("request in role" ,role);
+    console.log("request in role", role);
     try {
         const user = await User.findOne({ email });
 
@@ -109,4 +109,25 @@ async function getMembersAndManagers(req, res) {
     }
 }
 
-module.exports = { login, signup, getUserDetails, getMembersAndManagers };
+// Get count of managers
+function getManagerCount(req, res) {
+    User.countDocuments({ role: 'manager' })
+        .then(count => res.status(200).json({ count }))
+        .catch(err => {
+            console.error('Error fetching manager count:', err);
+            res.status(500).json({ message: 'Server error' });
+        });
+}
+
+// Get count of members
+function getMemberCount(req, res) {
+    User.countDocuments({ role: 'member' })
+        .then(count => res.status(200).json({ count }))
+        .catch(err => {
+            console.error('Error fetching member count:', err);
+            res.status(500).json({ message: 'Server error' });
+        });
+}
+
+
+module.exports = { login, signup, getUserDetails, getMembersAndManagers, getManagerCount, getMemberCount };

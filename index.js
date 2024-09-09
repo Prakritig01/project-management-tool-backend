@@ -47,6 +47,9 @@ app.post('/login', authController.login);
 app.post('/signup', authController.signup);
 app.get('/members-and-managers', authController.getMembersAndManagers);
 app.get('/user/:email', authController.getUserDetails);
+app.get('/auth/manager-count', authController.getManagerCount);
+app.get('/auth/member-count', authController.getMemberCount);
+
 
 app.use('/tasks', taskRouter);
 app.use('/projects', projectRouter);

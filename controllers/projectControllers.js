@@ -56,4 +56,15 @@ const getAssignedManagers = (req, res) => {
         });
 };
 
-module.exports = { addProject, getAllProjects, deleteProject, getAssignedManagers };
+const getTotalProjects = (req, res) => {
+    Project.countDocuments()
+        .then((totalProjects) => {
+            res.json({ totalProjects });
+        })
+        .catch((error) => {
+            console.error('Failed to fetch total projects:', error);
+            res.status(500).json({ error: 'Failed to fetch total projects' });
+        });
+};
+
+module.exports = { addProject, getAllProjects, deleteProject, getAssignedManagers, getTotalProjects };

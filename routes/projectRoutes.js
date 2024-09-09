@@ -1,5 +1,6 @@
 const express = require('express');
 const projectController = require('../controllers/projectControllers');
+const Project = require('../models/projectModel');
 
 const router = express.Router();
 
@@ -14,5 +15,8 @@ router.delete('/deleteProject/:id', projectController.deleteProject);
 
 // GET request to fetch assigned managers
 router.get('/assigned-managers', projectController.getAssignedManagers);
+
+// GET request to fetch total projects count
+router.get('/count', projectController.getTotalProjects);
 
 module.exports = router;
