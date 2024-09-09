@@ -1,101 +1,112 @@
 const User = require('../models/userModel');
+const jwt = require('jsonwebtoken');
+
+function getToken(email) {
+    const secret = 'veryComplexSecret'; // Secret key for signing the token
+    const token = jwt.sign({ email }, secret, { expiresIn: '5h' }); // Expires in 5 hours
+    return token;
+}
 
 // Login function
-function login(req, res) {
+async function login(req, res) {
     const { email, password, role } = req.body;
 
-    // Find user by email
-    User.findOne({ email })
-        .then((user) => {
-            if (!user) {
-                return res.status(400).json({ message: 'User not found' });
-            }
+    try {
+        const user = await User.findOne({ email });
 
-            // Convert role values to lowercase for case-insensitive comparison
-            const formRole = role.toLowerCase();
-            const storedRole = user.role.toLowerCase();
+        if (!user) {
+            return res.status(400).json({ message: 'User not found' });
+        }
 
-            if (user.password !== password || storedRole !== formRole) {
-                console.log("Request body role:", formRole);
-                console.log("User role:", storedRole);
-                return res.status(401).json({ message: 'Incorrect password or role' });
-            } else {
-                console.log('Password matched!');
-                // On successful login, respond with user details and token (if you plan to use JWT later)
-                res.status(200).json({
-                    message: 'Login successful',
-                    user: {
-                        name: user.name,
-                        email: user.email,
-                        role: storedRole,
-                    },
-                });
-            }
-        })
-        .catch((err) => {
-            console.error('Error during login:', err);
-            res.status(500).json({ message: 'Server error' });
-        });
+        if (user.password !== password || user.role.toLowerCase() !== role.toLowerCase()) {
+            return res.status(401).json({ message: 'Incorrect password or role' });
+        }
+
+        const token = getToken(user.email);
+        console.log(token);
+        return res.status(200).json({
+            message: 'Login successful',
+            user: {
+                name: user.name,
+                email: user.email,
+                role: user.role,
+            },
+            token: token
+        }
+        );
+    } catch (err) {
+        console.error('Error during login:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
 }
 
 // Signup function
-function signup(req, res) {
-    const obj = req.body;
-    const newUser = new User(obj);
-    
-    newUser.save()
-        .then(() => {
-            console.log('User created successfully');
-            res.status(200).json({ message: 'User created successfully' });
-        })
-        .catch((err) => {
-            console.log('Error creating user:', err);
-            res.status(500).json({ message: 'User not created' });
+async function signup(req, res) {
+    const { name, email, password, role } = req.body;
+
+    try {
+        const newUser = new User({ name, email, password, role });
+        const user = await newUser.save();
+
+        // const token = getToken(user.email);
+        // // Set token in HTTP-only cookie
+        // res.cookie('authToken', token, {
+        //     httpOnly: true,
+        //     maxAge: 5 * 60 * 60 * 1000, // 5 hours
+        //     sameSite: 'None',
+        //     secure: false // Set to true if using HTTPS
+        // });
+
+        res.status(200).json({
+            message: 'User created successfully',
+            user: {
+                name: user.name,
+                email: user.email,
+                role: user.role,
+            }
         });
+    } catch (err) {
+        console.log('Error creating user:', err);
+        res.status(500).json({ message: 'User not created' });
+    }
 }
 
 // Get User Details function
-function getUserDetails(req, res) {
-    const { email } = req.params;  // Assuming email is passed in the URL as a parameter
+async function getUserDetails(req, res) {
+    const { email } = req.params;
 
-    // Find user by email
-    User.findOne({ email })
-        .then((user) => {
-            if (!user) {
-                return res.status(404).json({ message: 'User not found' });
-            }
+    try {
+        const user = await User.findOne({ email });
 
-            // Send user details (excluding sensitive data like password)
-            res.status(200).json({
-                name: user.name,
-                email: user.email,
-                role: user.role
-            });
-        })
-        .catch((err) => {
-            console.error('Error fetching user details:', err);
-            res.status(500).json({ message: 'Server error' });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({
+            name: user.name,
+            email: user.email,
+            role: user.role
         });
+    } catch (err) {
+        console.error('Error fetching user details:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
 }
 
-function getMembersAndManagers(req, res) {
-    // Find users by roles
-    User.find({ role: { $in: ['member', 'manager'] } }) // Assuming 'member' and 'manager' are the roles
-        .then((users) => {
-            // Group users by their role
-            const members = users.filter(user => user.role.toLowerCase() === 'member');
-            const managers = users.filter(user => user.role.toLowerCase() === 'manager');
+async function getMembersAndManagers(req, res) {
+    try {
+        const users = await User.find({ role: { $in: ['member', 'manager'] } });
+        const members = users.filter(user => user.role.toLowerCase() === 'member');
+        const managers = users.filter(user => user.role.toLowerCase() === 'manager');
 
-            res.status(200).json({
-                members,
-                managers
-            });
-        })
-        .catch((err) => {
-            console.error('Error fetching users:', err);
-            res.status(500).json({ message: 'Server error' });
+        res.status(200).json({
+            members,
+            managers
         });
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
 }
-
 
 module.exports = { login, signup, getUserDetails, getMembersAndManagers };

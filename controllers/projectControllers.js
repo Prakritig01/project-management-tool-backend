@@ -56,5 +56,4 @@ const getAssignedManagers = (req, res) => {
         });
 };
 
-
 module.exports = { addProject, getAllProjects, deleteProject, getAssignedManagers };
