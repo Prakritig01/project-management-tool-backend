@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const cookieParser = require('cookie-parser');
+
 const taskRouter = require('./routes/taskRoutes');
 const authController = require('./controllers/authController');
 const projectRouter = require('./routes/projectRoutes');
@@ -36,7 +36,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(cookieParser()); // Ensure this is used before your routes
+
 
 // Routes
 app.get('/', (req, res) => {

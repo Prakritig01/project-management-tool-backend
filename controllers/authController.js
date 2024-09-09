@@ -10,7 +10,7 @@ function getToken(email) {
 // Login function
 async function login(req, res) {
     const { email, password, role } = req.body;
-
+    console.log("request in role" ,role);
     try {
         const user = await User.findOne({ email });
 
