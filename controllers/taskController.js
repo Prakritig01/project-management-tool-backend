@@ -2,19 +2,25 @@ const Task = require('../models/taskModel');
 
 
 const addTask = (req, res) => {
-    const taskData = req.body; // Extract the task data from the request body
-    const newTask = new Task(taskData); // Create a new instance of the taskModel with the provided data
-    
-    // Save the task to the database
+    const taskData = req.body;
+
+    // Create a new task based on the data received
+    const newTask = new Task({
+        title: taskData.title,
+        description: taskData.description,
+        deadline: taskData.deadline,
+        priority: taskData.priority,
+        status: taskData.status,
+        members: taskData.members // Reference to the assigned member's ID
+    });
+
     newTask.save()
         .then((result) => {
-            console.log(`New task added: ${result.title}`); // Log the title of the new task
-            res.status(201).json({ message: 'Task added successfully', task: result }); // Send a success response with the new task data
-            
+            res.status(201).json({ message: 'Task added successfully', task: result });
         })
         .catch((err) => {
-            console.log(err); // Log any errors
-            res.status(500).json({ message: 'Failed to add task' }); // Send an error response
+            console.error('Error adding task:', err);
+            res.status(500).json({ message: 'Failed to add task' });
         });
 };
 
@@ -31,6 +37,18 @@ const getAllTasks = (req, res) => {
         });
 };
 
+const deleteTask = (req, res) => {
+    const taskId = req.params.id;
+    Task.findByIdAndDelete(taskId)
+        .then((result) => {
+            res.status(200).json({ message: 'Task deleted successfully' });
+        })
+        .catch((err) => {
+            console.error('Error deleting task:', err);
+            res.status(500).json({ error: 'Failed to delete task' });
+        });
+}
 
 
-module.exports = {addTask, getAllTasks};
+
+module.exports = { addTask, getAllTasks, deleteTask };

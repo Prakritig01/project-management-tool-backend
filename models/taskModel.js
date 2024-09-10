@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const User = require('./userModel');
 const Schema = mongoose.Schema;
 
 const taskSchema = new Schema({
@@ -26,6 +27,11 @@ const taskSchema = new Schema({
         type : String,
         required : true,
         trim : true
+    },
+    members : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'User',
+        required : true
     }
 },{timestamps : true});
 
