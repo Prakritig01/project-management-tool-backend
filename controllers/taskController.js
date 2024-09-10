@@ -49,6 +49,18 @@ const deleteTask = (req, res) => {
         });
 }
 
+const getTotalTaskCount = (req, res) => {
+    console.log('Counting total tasks...');
+    Task.countDocuments()
+        .then((count) => {
+            console.log('Total tasks:', count);
+            res.status(200).json({ count });
+        })
+        .catch((err) => {
+            console.error('Error fetching total task count:', err);
+            res.status(500).json({ error: 'Failed to retrieve total task count' });
+        });
+};  
 
 
-module.exports = { addTask, getAllTasks, deleteTask };
+module.exports = { addTask, getAllTasks, deleteTask, getTotalTaskCount};

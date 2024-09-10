@@ -13,4 +13,7 @@ router.get('/getAllTasks', taskController.getAllTasks);
 //DELETE request to delete a task
 router.delete('/deleteTask/:id', taskController.deleteTask);
 
+//GET request to fetch total task count 
+router.get('/task-count', taskController.getTotalTaskCount);
+
 module.exports = router;
